@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Upload Excel File</h2>
+
+<a href="/download-template">Download Excel Template</a>
+
+<br><br>
+
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+</form>
+
+{% if errors %}
+    <h3 class="error">Errors:</h3>
+    <ul>
+        {% for error in errors %}
+            <li class="error">{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

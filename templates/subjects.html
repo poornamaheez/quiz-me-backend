@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Create Subject</h2>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Subject Name" required>
+    <input type="text" name="description" placeholder="Description">
+    <button type="submit">Add Subject</button>
+</form>
+
+<hr>
+
+<h2>All Subjects</h2>
+
+<ul>
+    {% for subject in subjects %}
+        <li>
+            {{ subject.name }}
+            <a href="/categories/{{ subject.id }}">Open</a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

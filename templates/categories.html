@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Create Category</h2>
+
+<form method="POST">
+    <input type="text" name="name" placeholder="Category Name" required>
+    <button type="submit">Add Category</button>
+</form>
+
+<hr>
+
+<h2>All Categories</h2>
+
+<ul>
+    {% for category in categories %}
+        <li>
+            {{ category.name }}
+            <a href="/upload/{{ category.id }}">Upload Questions</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<a href="/subjects">Back to Subjects</a>
+
+{% endblock %}

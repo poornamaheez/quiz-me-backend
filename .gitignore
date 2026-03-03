@@ -1,0 +1,30 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ---- Virtual environment ----
+venv/
+.venv/
+
+# ---- Environment variables ----
+.env
+
+# ---- Flask / app specific ----
+instance/
+*.log
+
+# ---- Uploads (user files should not be committed) ----
+uploads/
+
+# ---- Excel / generated files (optional, keep template.xlsx tracked) ----
+*.xlsx
+!template.xlsx
+
+# ---- OS / editor junk ----
+.DS_Store
+Thumbs.db
+
+# ---- IDEs ----
+.vscode/
+.idea/
