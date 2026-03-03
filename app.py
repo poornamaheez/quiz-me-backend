@@ -171,6 +171,76 @@ def upload(category_id):
 
     return render_template("upload.html")
 
+from flask import jsonify
+import random
+
+@app.route("/api/mobile/questions/<int:category_id>")
+def get_questions(category_id):
+
+    limit = int(request.args.get("limit", 10))
+
+    questions = Question.query.filter_by(category_id=category_id).all()
+
+    if not questions:
+        return jsonify({"message": "No questions found"}), 404
+
+    random.shuffle(questions)
+
+    selected_questions = questions[:limit]
+
+    result = []
+
+    for q in selected_questions:
+
+        options = Answer.query.filter_by(question_id=q.id).all()
+
+        option_list = [
+            {
+                "id": opt.id,
+                "answer_text": opt.answer_text
+            }
+            for opt in options
+        ]
+
+        result.append({
+            "id": q.id,
+            "question_text": q.question_text,
+            "question_type": q.question_type,
+            "difficulty": q.difficulty,
+            "options": option_list
+        })
+
+    return jsonify(result)
+
+
+@app.route("/api/mobile/submit", methods=["POST"])
+def submit_answer():
+
+    data = request.get_json()
+
+    question_id = data.get("question_id")
+    selected_option_ids = data.get("selected_options", [])
+
+    question = Question.query.get(question_id)
+
+    if not question:
+        return jsonify({"error": "Question not found"}), 404
+
+    correct_answers = Answer.query.filter_by(
+        question_id=question_id,
+        is_correct=True
+    ).all()
+
+    correct_ids = [a.id for a in correct_answers]
+
+    # Compare sets
+    is_correct = set(correct_ids) == set(selected_option_ids)
+
+    return jsonify({
+        "is_correct": is_correct,
+        "correct_option_ids": correct_ids,
+        "explanation": question.explanation
+    })
 
 # ===============================
 # RUN
