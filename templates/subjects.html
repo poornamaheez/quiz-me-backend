@@ -2,25 +2,50 @@
 
 {% block content %}
 
-<h2>Create Subject</h2>
+<div class="row mb-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Create Subject</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Subject Name</label>
+                        <input type="text" class="form-control" name="name" placeholder="e.g. Mathematics" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="2"
+                            placeholder="Optional description"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Subject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form method="POST">
-    <input type="text" name="name" placeholder="Subject Name" required>
-    <input type="text" name="description" placeholder="Description">
-    <button type="submit">Add Subject</button>
-</form>
+<h3 class="mb-3">All Subjects</h3>
 
-<hr>
-
-<h2>All Subjects</h2>
-
-<ul>
+<div class="row row-cols-1 row-cols-md-3 g-4">
     {% for subject in subjects %}
-        <li>
-            {{ subject.name }}
-            <a href="/categories/{{ subject.id }}">Open</a>
-        </li>
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ subject.name }}</h5>
+                <p class="card-text text-muted small">{{ subject.description or 'No description provided.' }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <a href="/categories/{{ subject.id }}" class="btn btn-outline-primary btn-sm w-100">View Categories</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No subjects created yet. Add one above!</div>
+    </div>
     {% endfor %}
-</ul>
+</div>
 
 {% endblock %}
