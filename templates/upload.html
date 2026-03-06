@@ -2,24 +2,53 @@
 
 {% block content %}
 
-<h2>Upload Excel File</h2>
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/subjects" class="text-decoration-none">Subjects</a></li>
+        <li class="breadcrumb-item"><a href="javascript:history.back()" class="text-decoration-none">Categories</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Upload Questions</li>
+    </ol>
+</nav>
 
-<a href="/download-template">Download Excel Template</a>
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-info">
+            <div class="card-header bg-info text-dark d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Upload Excel File</h5>
+                <a href="/download-template" class="btn btn-sm btn-light border">📥 Download Template</a>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">Please upload an excel file matching the template format to generate
+                    questions for this category.</p>
 
-<br><br>
+                <form method="POST" enctype="multipart/form-data" class="d-flex flex-column align-items-center">
+                    <div class="input-group mb-4 w-75">
+                        <input type="file" class="form-control" name="file" accept=".xlsx, .xls" required>
+                    </div>
+                    <button type="submit" class="btn btn-info w-50 fw-bold">Upload File</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <button type="submit">Upload</button>
-</form>
+{% if success %}
+<div class="alert alert-success mt-4 shadow-sm" role="alert">
+    <h5 class="alert-heading">🎉 Success!</h5>
+    <p class="mb-0">{{ success }}</p>
+</div>
+{% endif %}
 
 {% if errors %}
-    <h3 class="error">Errors:</h3>
-    <ul>
+<div class="alert alert-danger mt-4 shadow-sm" role="alert">
+    <h5 class="alert-heading">⚠️ Upload Failed!</h5>
+    <hr>
+    <ul class="mb-0">
         {% for error in errors %}
-            <li class="error">{{ error }}</li>
+        <li>{{ error }}</li>
         {% endfor %}
     </ul>
+</div>
 {% endif %}
 
 {% endblock %}

@@ -14,6 +14,17 @@ app.config.from_object(Config)
 
 db.init_app(app)
 
+with app.app_context():
+    from sqlalchemy import inspect
+    inspector = inspect(db.engine)
+    existing_tables = inspector.get_table_names()
+    
+    db.create_all()
+    
+    if not existing_tables:
+        print("✅ Database tables created successfully!")
+    else:
+        print("⚡ Database tables already exist.")
 
 # ===============================
 # HOME
@@ -21,15 +32,6 @@ db.init_app(app)
 @app.route("/")
 def home():
     return redirect("/subjects")
-
-
-# ===============================
-# CREATE TABLES API
-# ===============================
-@app.route("/api/create-tables")
-def create_tables():
-    db.create_all()
-    return jsonify({"message": "Tables created successfully (if not exists)!"})
 
 
 # ===============================
@@ -174,6 +176,42 @@ def upload(category_id):
 from flask import jsonify
 import random
 
+
+@app.route("/api/mobile/subjects", methods=["GET"])
+def get_all_subjects():
+    subjects = Subject.query.all()
+    
+    if not subjects:
+        return jsonify({"message": "No subjects found"}), 404
+        
+    result = []
+    for s in subjects:
+        result.append({
+            "id": s.id,
+            "name": s.name,
+            "description": s.description
+        })
+        
+    return jsonify(result)
+
+
+@app.route("/api/mobile/categories/<int:subject_id>", methods=["GET"])
+def get_categories_by_subject(subject_id):
+    categories = Category.query.filter_by(subject_id=subject_id).all()
+    
+    if not categories:
+        return jsonify({"message": "No categories found for this subject"}), 404
+        
+    result = []
+    for c in categories:
+        result.append({
+            "id": c.id,
+            "name": c.name,
+            "subject_id": c.subject_id
+        })
+        
+    return jsonify(result)
+
 @app.route("/api/mobile/questions/<int:category_id>")
 def get_questions(category_id):
 
@@ -212,14 +250,16 @@ def get_questions(category_id):
 
     return jsonify(result)
 
-
 @app.route("/api/mobile/submit", methods=["POST"])
 def submit_answer():
 
     data = request.get_json()
 
-    question_id = data.get("question_id")
+    question_id = int(data.get("question_id"))
     selected_option_ids = data.get("selected_options", [])
+
+    # convert to integers
+    selected_option_ids = [int(i) for i in selected_option_ids]
 
     question = Question.query.get(question_id)
 
@@ -233,7 +273,6 @@ def submit_answer():
 
     correct_ids = [a.id for a in correct_answers]
 
-    # Compare sets
     is_correct = set(correct_ids) == set(selected_option_ids)
 
     return jsonify({
@@ -246,4 +285,4 @@ def submit_answer():
 # RUN
 # ===============================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000, host="0.0.0.0")
