@@ -250,14 +250,16 @@ def get_questions(category_id):
 
     return jsonify(result)
 
-
 @app.route("/api/mobile/submit", methods=["POST"])
 def submit_answer():
 
     data = request.get_json()
 
-    question_id = data.get("question_id")
+    question_id = int(data.get("question_id"))
     selected_option_ids = data.get("selected_options", [])
+
+    # convert to integers
+    selected_option_ids = [int(i) for i in selected_option_ids]
 
     question = Question.query.get(question_id)
 
@@ -271,7 +273,6 @@ def submit_answer():
 
     correct_ids = [a.id for a in correct_answers]
 
-    # Compare sets
     is_correct = set(correct_ids) == set(selected_option_ids)
 
     return jsonify({
